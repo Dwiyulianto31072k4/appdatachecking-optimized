@@ -54,6 +54,25 @@ if uploaded_file is not None:
                     "CONTRACT_NO": str
                 }
             )
+
+            for col in ["CUSTNAME", "JENIS_KELAMIN", "TEMPAT_LAHIR"]:
+                if col in data.columns:
+                    data[col] = data[col].astype(str).str.strip()
+
+            if "TANGGAL_LAHIR" in data.columns:
+                s = data["TANGGAL_LAHIR"]
+                if pd.api.types.is_numeric_dtype(s):
+                    data["TANGGAL_LAHIR"] = pd.to_datetime("1899-12-30") + pd.to_timedelta(s.astype(float), unit="D")
+                
+                else:
+                    data["TANGGAL_LAHIR"] = pd.to_datetime(
+                        s.astype(str).str.strip(),
+                        errors="coerce",
+                        dayfirst=True
+
+                    )
+
+            
             
             # Tampilkan info data yang diupload
             st.success(f"File berhasil diupload! Total data: {len(data):,} baris")
